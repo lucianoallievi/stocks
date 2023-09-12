@@ -1,0 +1,31 @@
+{
+  "products": [
+    {
+      "symbol": "000001",
+      "name": "Ping An Bank Co., Ltd.",
+      "currency": "CNY",
+      "exchange": "SZSE",
+      "mic_code": "XSHE",
+      "country": "China",
+      "type": "Common Stock"
+    },
+    {
+      "symbol": "000002",
+      "name": "China Vanke Co., Ltd.",
+      "currency": "CNY",
+      "exchange": "SZSE",
+      "mic_code": "XSHE",
+      "country": "China",
+      "type": "Common Stock"
+    },
+    {
+      "symbol": "000004",
+      "name": "Shenzhen GuoHua Network Security Technology Co., Ltd.",
+      "currency": "CNY",
+      "exchange": "SZSE",
+      "mic_code": "XSHE",
+      "country": "China",
+      "type": "Common Stock"
+    }
+  ]
+}
