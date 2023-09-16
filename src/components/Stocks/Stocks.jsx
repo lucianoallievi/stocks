@@ -90,7 +90,7 @@ export default function Stocks() {
             <Pagination
               paginaActual={pageURL}
               totalPaginas={totalPaginas}
-              setPaginaActual={setPage}
+              url="stocks"
             />
           );
         }

@@ -1,8 +1,12 @@
 import { Link } from "react-router-dom";
 
-export const Pagination = ({ paginaActual, totalPaginas, setPaginaActual }) => {
+export const Pagination = ({ paginaActual, totalPaginas, url }) => {
   let paginaInicial;
   let link_paginacion = "";
+  let cantLinks = 1;
+
+  totalPaginas > 10 ? (cantLinks = 10) : (cantLinks = totalPaginas);
+
   paginaActual = Number.parseInt(paginaActual);
   if (paginaActual <= 5) {
     paginaInicial = 1;
@@ -16,45 +20,41 @@ export const Pagination = ({ paginaActual, totalPaginas, setPaginaActual }) => {
   //retorno  =+ `<button onClick={setPaginaActual(index)}>Pagina: {index}</button>;
 
   return (
-    <div>
+    <div id="pagination">
       {(() => {
         let vista = [];
-        if (paginaActual - 1 == -1)
+        if (paginaActual - 1 == 0)
           vista.push(
-            <button className="me-2" class="disabled">
-              Anterior
-            </button>
+            <button className="me-2 diabled disabled">Anterior</button>
           );
         else
           vista.push(
-            <Link className="me-2" to={`/stocks/${paginaActual - 1}`}>
+            <Link className="me-2" to={`/${url}/${paginaActual - 1}`}>
               Anterior
             </Link>
           );
-        for (let index = paginaInicial; index < paginaInicial + 11; index++) {
+        for (
+          let index = paginaInicial;
+          index < paginaInicial + cantLinks;
+          index++
+        ) {
           let numero_pagina = index;
           if (paginaActual == index)
             vista.push(
-              <button className="me-2" class="disabled">
-                {numero_pagina}
-              </button>
+              <button className="me-2 disabled">{numero_pagina}</button>
             );
           else
             vista.push(
-              <Link className="me-2" to={`/stocks/${index}`}>
+              <Link className="me-2" to={`/${url}/${index}`}>
                 {numero_pagina}
               </Link>
             );
         }
         if (paginaActual + 1 > totalPaginas)
-          vista.push(
-            <button className="me-2" class="disabled">
-              Siguiente
-            </button>
-          );
+          vista.push(<button className="me-2 disabled">Siguiente</button>);
         else
           vista.push(
-            <Link className="me-2" to={`/stocks/${paginaActual + 1}`}>
+            <Link className="me-2" to={`/${url}/${paginaActual + 1}`}>
               Siguiente
             </Link>
           );

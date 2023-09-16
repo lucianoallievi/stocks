@@ -4,7 +4,7 @@ import uuid from "react-uuid";
 
 export const StocksList = ({ stocks }) => {
   return (
-    <div className="container my-5">
+    <div id="stocksList" className="container my-5">
       <Table striped bordered hover>
         <thead>
           <tr>

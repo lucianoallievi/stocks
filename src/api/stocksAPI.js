@@ -28,7 +28,7 @@ export const getStocks = async (symbol, exchange) => {
 export const getStockDetail = async (form) => {
   //const res = await stocksAPI.get("/stocks/");
   if (form) {
-    let url = `/time_series?symbol=${form.symbol}&interval=${form.interval}`;
+    let url = `/time_series?symbol=${form.symbol}&interval=${form.interval}min`;
 
     if (form.start_date) url = url + `&start_date=${form.start_date}`;
     if (form.end_date) url = url + `&end_date=${form.end_date}`;
