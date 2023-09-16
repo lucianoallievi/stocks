@@ -1,107 +1,83 @@
-import { useQuery } from "@tanstack/react-query";
-import { useEffect, useState } from "react";
-import { getStocks } from "../../api/stocksAPI";
-import { getPoke } from "../../api/pokeAPI";
-import { json, Navigate } from "react-router-dom";
+import { useState, useEffect } from "react";
 import { StocksList } from "../StocksList/StocksList";
+import { SearchForm } from "../SearchForm/SearchForm";
 import { useParams } from "react-router-dom";
-
 import { Pagination } from "../Pagination/Pagination";
 
-export default function Stocks() {
+import { Navigate } from "react-router-dom";
+
+export const Stocks = () => {
+  const [stocks, setStocks] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [searchOptions, setSearchOptions] = useState({});
   const { pageURL } = useParams();
-  console.log(pageURL);
+
+  useEffect(() => {
+    setLoading(true);
+    //let url = "https://api.twelvedata.com/stocks?source=docs";
+    let url = "https://api.twelvedata.com/stocks?source=docs&exchange=NYSE ";
+
+    //if (searchOptions.symbol) url = url + `&symbol=${searchOptions.symbol}`;
+    if (searchOptions.symbol)
+      url = `https://api.twelvedata.com/stocks?source=docs&symbol=${searchOptions.symbol}`;
+
+    fetch(url)
+      .then((resp) => resp.json())
+      .then((resp) => setStocks(resp.data))
+      .catch((error) => console.log("Error:", error))
+      .finally(() => setLoading(false));
+  }, [searchOptions]);
+
   if (!pageURL) {
     return <Navigate to="/stocks/1" />;
   }
 
-  const [page, setPage] = useState(null);
-  const [exchange, setExchange] = useState(null);
-  const [symbol, setSymbol] = useState(null);
-  const [stocks, setStocks] = useState([]);
-  const [isLoading, setIsLoading] = useState(null);
-  //const [isError, setIsError] = useState(false);
-  //const [error, setError] = useState();
+  let array = [];
+  let totalPaginas = null;
 
-  const { isFetching, data, isError, error, refetch } = useQuery({
-    queryKey: ["stocks"],
-    queryFn: () => getStocks(symbol, exchange),
-    enabled: false,
-  });
+  if (stocks) {
+    const limite = 20;
 
-  useEffect(() => {
-    //console.log(refetch());
-    /*console.log(isFetching);
-    console.log(data);
-    console.log(isError);*/
-    //setIsLoading(isFetching);
-    //    setStocks(data.data);
-    //   setIsError(_isError);
-    // setError(_error);
-  }, []);
+    const inicial = (pageURL - 1) * limite;
+    const final = inicial + limite;
 
-  if (isFetching) return <div>Loading...</div>;
-  else if (isError) return <div>Error: {error}</div>;
-  let totalPaginas;
-  let array;
-  if (data && data.data) {
-    let limite = 20;
-
-    totalPaginas = Math.ceil(data.data.length / limite);
-    let paginaActual = pageURL;
-
-    let inicial = (paginaActual - 1) * limite;
-    let final = inicial + limite;
-
-    array = data.data.slice(inicial, final);
+    if (!loading) {
+      array = stocks.slice(inicial, final);
+      totalPaginas = Math.ceil(stocks.length / limite);
+    }
   } else {
     totalPaginas = 0;
     array = [];
+    console.log("sin stocks");
   }
+
+  //console.log(array, totalPaginas, loading);
 
   return (
     <div>
-      <input
-        placeholder="exchange"
-        name="exchange"
-        value={exchange}
-        onChange={(e) => {
-          setExchange(e.target.value);
-        }}
+      <h2>Stocks</h2>
+      <hr />
+      <SearchForm
+        searchOptions={searchOptions}
+        setSearchOptions={setSearchOptions}
       />
-      <input
-        name="symbol"
-        placeholder="symbol"
-        value={symbol}
-        onChange={(e) => {
-          setSymbol(e.target.value);
-        }}
-      />
-      <button
-        onClick={() => {
-          refetch();
-        }}
-      >
-        Enviar
-      </button>
-      {(() => {
-        if (data && data.data) {
-          return (
+
+      {loading ? (
+        <p>Cargando...</p>
+      ) : (
+        <>
+          {totalPaginas <= 1 ? (
+            <></>
+          ) : (
             <Pagination
               paginaActual={pageURL}
               totalPaginas={totalPaginas}
               url="stocks"
             />
-          );
-        }
-      })()}
-      <StocksList stocks={array} />
+          )}
+          <StocksList stocks={array} />
+        </>
+      )}
     </div>
   );
-}
-
-//<Pagination
-//paginaActual={paginaActual}
-//setPaginaActual={setPaginaActual}
-//limite={limite}
-//totalPaginas={totalPaginas}
+};

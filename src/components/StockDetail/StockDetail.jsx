@@ -44,13 +44,15 @@ export const StockDetail = () => {
   useEffect(() => {
     let url = `https://api.twelvedata.com/time_series?symbol=${stock.symbol}&interval=${searchOptions.interval}`;
 
-    if (setSearchOptions.tipoFecha == "historico") {
+    if (searchOptions.tipoFecha == "historico") {
       url =
         url +
-        `&start_date=${searchOptions.start_date}&end_date=${searchOptions.end_date}`;
+        `&start_date=${searchOptions.desde_fecha} ${searchOptions.desde_hora}&end_date=${searchOptions.hasta_fecha} ${searchOptions.hasta_hora}`;
     }
 
     url = url + "&apikey=c9b238306ce4412085073f72f1ac3f0e";
+
+    console.log(url);
 
     fetch(url)
       .then((resp) => resp.json())
@@ -63,9 +65,11 @@ export const StockDetail = () => {
   }, [searchOptions]);
   if (data) {
     if (data.status == "ok") {
+      // console.log("data.values", data.values);
       data.values.forEach((d) => {
-        array_valores.push(Number.parseInt(d.close));
+        array_valores.push({ close: Number.parseFloat(d.close) });
       });
+
       /*try {
         Highcharts.chart("grafico_lineas", {
           title: {
@@ -143,7 +147,7 @@ export const StockDetail = () => {
   
   */
 
-  const graficar = () => {
+  /* const graficar = () => {
     if (tipoFecha == "tiempoReal") {
       let formulario = {
         symbol: stock.symbol,
@@ -175,8 +179,8 @@ export const StockDetail = () => {
     console.log(desdeFecha);
     console.log(desdeHora);
     console.log(hastaFecha);
-    console.log(hastaHora);*/
-  };
+    console.log(hastaHora);
+  };*/
 
   return (
     <div>
@@ -186,7 +190,11 @@ export const StockDetail = () => {
       <hr />
       <GraphForm setSearchOptions={setSearchOptions} />
       {/*<div id="grafico_lineas"></div>*/}
-      <StockGraphic stock={stock} array_valores={array_valores} />
+      <StockGraphic
+        stock={stock}
+        //array_valores={array_valores}
+        data={data}
+      />
 
       {/*isFetching ? <p>Cargando</p> : <p>{JSON.stringify(data)}</p>*/}
     </div>

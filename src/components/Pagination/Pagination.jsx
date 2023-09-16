@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { Navigate } from "react-router-dom";
 
 export const Pagination = ({ paginaActual, totalPaginas, url }) => {
   let paginaInicial;
@@ -13,7 +14,9 @@ export const Pagination = ({ paginaActual, totalPaginas, url }) => {
   } else {
     paginaInicial = paginaActual - 5;
   }
-  console.log(paginaActual);
+
+  console.log(paginaActual, totalPaginas);
+
   //let primerLink = 10 - paginaActual < 0 ? 1 : limite - paginaActual;
 
   //for (let index = primerLink; index < limite + primerLink; index++) {

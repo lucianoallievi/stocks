@@ -1,21 +1,62 @@
 import { useState } from "react";
+import Swal from "sweetalert2";
 
 export const GraphForm = ({ setSearchOptions }) => {
   const [values, setValues] = useState({
     interval: null,
     tipoFecha: null,
-    start_date: null,
-    end_date: null,
+    desde_fecha: null,
+    desde_hora: null,
+    hasta_fecha: null,
+    hasta_hora: null,
   });
+
+  const alert = () => {
+    Swal.fire({
+      icon: "error",
+      title: "Oops...",
+      text: "Completá todos los campos del formulario.",
+    });
+  };
+
+  const checkImput = () => {
+    if (
+      (values.tipoFecha == "tiempoReal" && values.interval) ||
+      (values.tipoFecha == "historico" &&
+        values.desde_fecha &&
+        values.desde_hora &&
+        values.hasta_fecha &&
+        values.hasta_hora &&
+        values.interval)
+    ) {
+      console.log(
+        "pasa la validación",
+        values.tipoFecha,
+        values.interval,
+        values.desde_fecha,
+        values.desde_hora,
+        values.hasta_fecha,
+        values.hasta_hora
+      );
+      return true;
+    }
+    return false;
+  };
 
   const handleInputChange = (e) => {
     setValues({ ...values, [e.target.name]: e.target.value });
+    console.log(e.target.name, e.target.value);
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log(values);
-    setSearchOptions(values);
+
+    if (!checkImput()) {
+      alert();
+      console.log("alerto");
+    } else {
+      setSearchOptions(values);
+    }
   };
   /*let historico = document.querySelector("#historico");
   let tiempoReal = document.querySelector("#tiempoReal");
@@ -39,21 +80,16 @@ export const GraphForm = ({ setSearchOptions }) => {
               name="tipoFecha"
               id="tiempoReal"
               value="tiempoReal"
-              onChange={() => {
-                handleInputChange;
+              onChange={handleInputChange}
+              onClick={() => {
                 document.querySelector(".fecha_contenedor").style.display =
                   "none";
               }}
             />
             <label htmlFor="tiempoReal">Tiempo Real</label>
           </div>
-          <select
-            name="interval"
-            id="interval"
-            required
-            onChange={handleInputChange}
-          >
-            <option> Seleccionar intervalo</option>
+          <select name="interval" id="interval" onChange={handleInputChange}>
+            <option value=""> Seleccionar intervalo</option>
             <option value="1min">1 minuto</option>
             <option value="5min">5 minutos</option>
             <option value="15min">15 minutos</option>
@@ -64,8 +100,8 @@ export const GraphForm = ({ setSearchOptions }) => {
               name="tipoFecha"
               id="historico"
               value="historico"
-              onChange={() => {
-                handleInputChange;
+              onChange={handleInputChange}
+              onClick={() => {
                 document.querySelector(".fecha_contenedor").style.display =
                   "flex";
               }}
